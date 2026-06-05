@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一志望カウントダウン</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans JP',sans-serif;background:transparent;display:flex;justify-content:center;padding:4px}
+.ticket{width:100%;max-width:860px;background:#1B2A4A;border-radius:12px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.left .label{font-size:11px;letter-spacing:.28em;color:#BF9B56;font-weight:700}
+.left .univ{font-family:'Shippori Mincho B1',serif;font-size:22px;color:#F7F5F0;font-weight:600;margin-top:4px;letter-spacing:.04em}
+.left .dates{font-size:11.5px;color:#9aa6bf;margin-top:5px}
+.stats{display:flex;gap:10px}
+.stat{min-width:104px;text-align:center;border-radius:9px;padding:10px 14px 9px}
+.stat.primary{border:1.5px solid #BF9B56}
+.stat.secondary{border:1px solid #51618a}
+.stat .num{font-size:30px;line-height:1.05;font-weight:700;color:#F7F5F0}
+.stat.primary .num{color:#BF9B56}
+.stat .num small{font-size:13px;font-weight:500}
+.stat .cap{font-size:10.5px;color:#F7F5F0;margin-top:3px;letter-spacing:.05em}
+@media(max-width:560px){.ticket{justify-content:center;text-align:center}.left .univ{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="ticket">
+  <div class="left">
+    <div class="label">第一志望</div>
+    <div class="univ">日本医科大学 医学部</div>
+    <div class="dates">一次試験 2027.1.28 ／ 共通テスト 2027.1.16</div>
+  </div>
+  <div class="stats">
+    <div class="stat primary">
+      <div class="num" id="d1">—<small>日</small></div>
+      <div class="cap">一次試験まで</div>
+    </div>
+    <div class="stat secondary">
+      <div class="num" id="d2">—<small>日</small></div>
+      <div class="cap">共通テストまで</div>
+    </div>
+  </div>
+</div>
+<script>
+function days(to){
+  const now=new Date();
+  const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  return Math.max(0,Math.round((new Date(to)-t0)/86400000));
+}
+document.getElementById("d1").innerHTML=days("2027-01-28T00:00:00+09:00")+"<small>日</small>";
+document.getElementById("d2").innerHTML=days("2027-01-16T00:00:00+09:00")+"<small>日</small>";
+</script>
+</body>
+</html>
