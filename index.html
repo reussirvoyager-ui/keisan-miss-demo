@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>計算ミス ノート｜デモ版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1B2A4A; --navy-light:#2A3D63; --cream:#F7F5F0; --gold:#BF9B56; --white:#fff;
+  --red:#C0392B; --green:#2E7D32; --gray:#8a8a8a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--navy);min-height:100vh}
+header{background:var(--navy);color:var(--cream);padding:20px 16px 14px;text-align:center}
+header h1{font-family:'Shippori Mincho B1',serif;font-size:1.35rem;letter-spacing:.12em}
+header .sub{color:var(--gold);font-size:.72rem;letter-spacing:.2em;margin-top:4px}
+.demo-note{background:var(--gold);color:var(--navy);font-size:.72rem;text-align:center;padding:5px 10px;font-weight:500}
+.menu{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px 14px 4px;max-width:760px;margin:0 auto}
+.menu button{background:var(--white);border:1px solid #e4dfd5;border-radius:10px;padding:10px 4px;cursor:pointer;font-family:inherit;color:var(--navy);transition:.2s}
+.menu button .ic{font-size:1.2rem;display:block;margin-bottom:3px}
+.menu button .lb{font-size:.68rem;font-weight:500}
+.menu button.active{background:var(--navy);color:var(--cream);border-color:var(--navy)}
+.menu button.active .lb{color:var(--gold)}
+main{max-width:760px;margin:0 auto;padding:10px 14px 60px}
+.section-title{font-family:'Shippori Mincho B1',serif;font-size:1.05rem;margin:16px 0 10px;border-left:3px solid var(--gold);padding-left:10px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:6px 0;-webkit-overflow-scrolling:touch}
+.chip{flex:0 0 auto;border:1px solid var(--navy);background:var(--white);color:var(--navy);border-radius:999px;padding:5px 14px;font-size:.78rem;cursor:pointer;font-family:inherit}
+.chip.active{background:var(--navy);color:var(--cream)}
+.subfilters{display:flex;gap:8px;margin:8px 0 4px;flex-wrap:wrap}
+.subfilters select{flex:1;min-width:130px;padding:8px;border:1px solid #d8d2c4;border-radius:8px;background:var(--white);font-family:inherit;font-size:.8rem;color:var(--navy)}
+.count{font-size:.78rem;color:var(--gray);margin:8px 2px}
+.card{background:var(--white);border:1px solid #e6e1d6;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(27,42,74,.06)}
+.card.resolved{opacity:.62}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.card h3{font-size:.92rem;line-height:1.45;flex:1}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 4px}
+.badge{font-size:.66rem;padding:2px 9px;border-radius:999px;background:var(--cream);border:1px solid #ddd6c8}
+.badge.type{background:var(--navy);color:var(--cream);border-color:var(--navy)}
+.badge.rep{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700}
+.detail{font-size:.78rem;color:#444;line-height:1.7;margin-top:6px}
+.detail b{color:var(--navy)}
+.meta{font-size:.68rem;color:var(--gray);margin-top:8px;display:flex;justify-content:space-between;align-items:center}
+.resolve-btn{border:1px solid var(--navy);background:var(--white);color:var(--navy);border-radius:8px;padding:5px 12px;font-size:.72rem;cursor:pointer;font-family:inherit}
+.resolve-btn.done{background:var(--green);border-color:var(--green);color:#fff}
+.stat-block{background:var(--white);border:1px solid #e6e1d6;border-radius:12px;padding:16px;margin-bottom:12px}
+.stat-block h3{font-family:'Shippori Mincho B1',serif;font-size:.95rem;margin-bottom:12px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.75rem}
+.bar-row .lbl{width:72px;flex-shrink:0}
+.bar-wrap{flex:1;background:var(--cream);border-radius:6px;height:18px;overflow:hidden}
+.bar{height:100%;background:var(--navy);border-radius:6px;min-width:2px;transition:width .5s}
+.bar.gold{background:var(--gold)}
+.bar-row .num{width:34px;text-align:right;font-weight:700}
+.big-num{font-family:'Shippori Mincho B1',serif;font-size:2.2rem;color:var(--navy);text-align:center}
+.big-num small{font-size:.85rem;color:var(--gray);display:block;font-family:'Noto Sans JP',sans-serif}
+.pattern-group{margin-bottom:14px}
+.pattern-group h3{font-size:.88rem;background:var(--navy);color:var(--cream);padding:8px 12px;border-radius:8px 8px 0 0}
+.pattern-group ul{background:var(--white);border:1px solid #e6e1d6;border-top:none;border-radius:0 0 8px 8px;padding:10px 14px 10px 30px;font-size:.8rem;line-height:1.9}
+form .field{margin-bottom:12px}
+form label{display:block;font-size:.78rem;font-weight:700;margin-bottom:4px}
+form input[type=text],form textarea,form select{width:100%;padding:10px;border:1px solid #d8d2c4;border-radius:8px;font-family:inherit;font-size:.85rem;background:var(--white);color:var(--navy)}
+form textarea{height:64px;resize:vertical}
+.submit-btn{width:100%;background:var(--navy);color:var(--cream);border:none;border-radius:10px;padding:13px;font-size:.92rem;font-family:'Shippori Mincho B1',serif;letter-spacing:.15em;cursor:pointer}
+.submit-btn:active{background:var(--navy-light)}
+.local-note{font-size:.7rem;color:var(--gray);text-align:center;margin-top:8px}
+footer{text-align:center;font-size:.66rem;color:var(--gray);padding:20px 10px 30px}
+.hidden{display:none}
+@media(min-width:640px){header h1{font-size:1.6rem}.menu button .lb{font-size:.78rem}}
+</style>
+</head>
+<body>
+<header>
+  <h1>計算ミス ノート</h1>
+  <div class="sub">医学部専門予備校 レユシール｜デモ版</div>
+</header>
+<div class="demo-note">※架空の生徒のサンプルデータです（実在の生徒情報は含まれません）</div>
+
+<nav class="menu">
+  <button data-view="list" class="active"><span class="ic">📋</span><span class="lb">全ミス一覧</span></button>
+  <button data-view="stats"><span class="ic">📊</span><span class="lb">統計・分析</span></button>
+  <button data-view="patterns"><span class="ic">🔍</span><span class="lb">ミスパターン</span></button>
+  <button data-view="add"><span class="ic">✏️</span><span class="lb">記録する</span></button>
+</nav>
+
+<main>
+  <!-- 一覧 -->
+  <section id="view-list">
+    <div class="section-title">分野で絞る</div>
+    <div class="chips" id="fieldChips"></div>
+    <div class="subfilters">
+      <select id="typeFilter">
+        <option value="">全ミス種類</option>
+        <option>理解不足</option><option>計算忘れ</option><option>符号ミス</option><option>条件漏れ</option><option>操作ミス</option>
+      </select>
+      <select id="stateFilter">
+        <option value="">全て表示</option>
+        <option value="open">未解決のみ</option>
+        <option value="done">解決済みのみ</option>
+      </select>
+    </div>
+    <div class="count" id="count"></div>
+    <div id="cards"></div>
+  </section>
+
+  <!-- 統計 -->
+  <section id="view-stats" class="hidden">
+    <div class="section-title">統計・分析</div>
+    <div class="stat-block">
+      <div class="big-num" id="resolveRate"><small>解決率</small></div>
+    </div>
+    <div class="stat-block"><h3>ミス種類別</h3><div id="typeBars"></div></div>
+    <div class="stat-block"><h3>分野別</h3><div id="fieldBars"></div></div>
+  </section>
+
+  <!-- パターン -->
+  <section id="view-patterns" class="hidden">
+    <div class="section-title">ミスパターン（意識すべきことリスト）</div>
+    <div id="patterns"></div>
+  </section>
+
+  <!-- 記録 -->
+  <section id="view-add" class="hidden">
+    <div class="section-title">計算ミスを記録する</div>
+    <form id="addForm">
+      <div class="field"><label>問題タイトル</label><input type="text" id="f-title" required placeholder="例：部分積分の符号処理ミス"></div>
+      <div class="field"><label>分野</label><select id="f-field"><option>微分</option><option>積分</option><option>三角関数</option><option>指数対数</option><option>数列</option><option>その他</option></select></div>
+      <div class="field"><label>ミス種類</label><select id="f-type"><option>理解不足</option><option>計算忘れ</option><option>符号ミス</option><option>条件漏れ</option><option>操作ミス</option></select></div>
+      <div class="field"><label>間違え方</label><textarea id="f-how" placeholder="どう間違えた？"></textarea></div>
+      <div class="field"><label>意識すべきこと</label><textarea id="f-note" placeholder="次はどうする？"></textarea></div>
+      <button type="submit" class="submit-btn">記 録 す る</button>
+      <div class="local-note">※デモのため、記録はこの端末（ブラウザ）にのみ保存されます</div>
+    </form>
+  </section>
+</main>
+
+<footer>計算ミス ノート（デモ版）｜医学部専門予備校 レユシール<br>実運用版では生徒ごとに専用アプリを発行し、Notionの指導記録と自動連携します</footer>
+
+<script>
+const FIELDS=["すべて","微分","積分","三角関数","指数対数","数列","その他"];
+const SEED=[
+{id:1,t:"積の微分で第2項の符号をマイナスにした",f:"微分",y:"符号ミス",src:"レユシールオリジナル計算プリント No.3",how:"(fg)'=f'g−fg' と記憶していた",note:"公式を書いてから代入する。暗算しない",d:"2026-05-13",rep:2,done:true},
+{id:2,t:"合成関数の微分で内側の微分を掛け忘れ",f:"微分",y:"計算忘れ",src:"レユシールオリジナル計算プリント No.5",how:"sin(2x) の微分を cos(2x) で止めた",note:"「外→内」の順で鎖をたどる",d:"2026-05-20",rep:3,done:false},
+{id:3,t:"定積分の上端・下端の取り違え",f:"積分",y:"操作ミス",src:"レユシールオリジナル計算プリント No.7",how:"F(a)−F(b) で計算した",note:"「上端マイナス下端」と声に出す",d:"2026-05-22",rep:1,done:true},
+{id:4,t:"部分積分の符号処理ミス",f:"積分",y:"符号ミス",src:"レユシールオリジナル計算プリント No.8",how:"−∫f'g のマイナスを落とした",note:"公式全体を書いてから部分代入",d:"2026-05-27",rep:2,done:false},
+{id:5,t:"(cos x)' の符号を正で覚えていた",f:"三角関数",y:"理解不足",src:"レユシールオリジナル計算プリント No.4",how:"(cos x)'=sin x とした",note:"単位円の傾きで確認する習慣",d:"2026-05-15",rep:3,done:false},
+{id:6,t:"加法定理の符号ミス（cosの式）",f:"三角関数",y:"符号ミス",src:"レユシールオリジナル計算プリント No.6",how:"cos(α+β) の第2項を＋にした",note:"「cosは符号が逆」と唱えてから書く",d:"2026-05-25",rep:1,done:true},
+{id:7,t:"対数方程式で真数条件の確認漏れ",f:"指数対数",y:"条件漏れ",src:"レユシールオリジナル計算プリント No.9",how:"x>0 を満たさない解を残した",note:"対数を見たらまず真数条件を書く",d:"2026-05-29",rep:2,done:false},
+{id:8,t:"指数法則の適用ミス（a^m × a^n）",f:"指数対数",y:"理解不足",src:"レユシールオリジナル計算プリント No.9",how:"指数を掛け算した（m×n）",note:"同じ底の積は指数の和",d:"2026-05-29",rep:1,done:true},
+{id:9,t:"Σ計算の範囲ミス（k=0始まりを見落とし）",f:"数列",y:"条件漏れ",src:"レユシールオリジナル計算プリント No.10",how:"項数を n とした（正しくは n+1）",note:"Σの上下を見て項数を先に数える",d:"2026-06-01",rep:1,done:false},
+{id:10,t:"等比数列の和で公比1の場合分け漏れ",f:"数列",y:"条件漏れ",src:"レユシールオリジナル計算プリント No.10",how:"r=1 を確認せず公式に代入",note:"文字の公比を見たら場合分け",d:"2026-06-01",rep:1,done:false},
+{id:11,t:"約分のし忘れ（最終答え）",f:"その他",y:"操作ミス",src:"レユシールオリジナル計算プリント No.2",how:"6/8 のまま提出",note:"答えを書いたら約分チェック",d:"2026-05-08",rep:1,done:true},
+{id:12,t:"移項時の符号ミス",f:"その他",y:"符号ミス",src:"レユシールオリジナル計算プリント No.1",how:"定数項の符号を変えずに移項",note:"移項＝符号反転を指さし確認",d:"2026-05-08",rep:2,done:true}
+];
+let extra=[],overrides={};
+try{extra=JSON.parse(localStorage.getItem("kmd_extra")||"[]");overrides=JSON.parse(localStorage.getItem("kmd_done")||"{}");}catch(e){}
+const data=()=>SEED.map(r=>({...r,done:(r.id in overrides)?overrides[r.id]:r.done})).concat(extra);
+let curField="すべて";
+
+// menu
+document.querySelectorAll(".menu button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".menu button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  ["list","stats","patterns","add"].forEach(v=>document.getElementById("view-"+v).classList.toggle("hidden",v!==b.dataset.view));
+  if(b.dataset.view==="stats")renderStats();
+  if(b.dataset.view==="patterns")renderPatterns();
+});
+
+// chips
+const chipWrap=document.getElementById("fieldChips");
+FIELDS.forEach(f=>{
+  const c=document.createElement("button");c.className="chip"+(f==="すべて"?" active":"");c.textContent=f;
+  c.onclick=()=>{curField=f;document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x.textContent===f));renderList();};
+  chipWrap.appendChild(c);
+});
+document.getElementById("typeFilter").onchange=renderList;
+document.getElementById("stateFilter").onchange=renderList;
+
+function renderList(){
+  const ty=document.getElementById("typeFilter").value, st=document.getElementById("stateFilter").value;
+  const rows=data().filter(r=>(curField==="すべて"||r.f===curField)&&(!ty||r.y===ty)&&(!st||(st==="open"?!r.done:r.done)));
+  document.getElementById("count").textContent=rows.length+"件";
+  const w=document.getElementById("cards");w.innerHTML="";
+  rows.sort((a,b)=>b.d.localeCompare(a.d)).forEach(r=>{
+    const div=document.createElement("div");div.className="card"+(r.done?" resolved":"");
+    div.innerHTML=`<div class="card-top"><h3>${r.t}</h3></div>
+      <div class="badges"><span class="badge type">${r.y}</span><span class="badge">${r.f}</span><span class="badge rep">×${r.rep}回</span>${r.done?'<span class="badge" style="background:#e4f0e4;border-color:#bcd9bc;color:#2E7D32">解決済み</span>':''}</div>
+      <div class="detail"><b>間違え方：</b>${r.how||"—"}<br><b>意識すべきこと：</b>${r.note||"—"}</div>
+      <div class="meta"><span>${r.d}｜${r.src||"手入力"}</span><button class="resolve-btn ${r.done?"done":""}">${r.done?"✓ 解決済み":"解決にする"}</button></div>`;
+    div.querySelector(".resolve-btn").onclick=()=>{
+      if(typeof r.id==="number"&&r.id<100){overrides[r.id]=!r.done;localStorage.setItem("kmd_done",JSON.stringify(overrides));}
+      else{const e=extra.find(x=>x.id===r.id);if(e){e.done=!e.done;localStorage.setItem("kmd_extra",JSON.stringify(extra));}}
+      renderList();
+    };
+    w.appendChild(div);
+  });
+}
+
+function bars(el,counts,gold){
+  const max=Math.max(...Object.values(counts),1);
+  el.innerHTML=Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>
+    `<div class="bar-row"><span class="lbl">${k}</span><div class="bar-wrap"><div class="bar ${gold?"gold":""}" style="width:${v/max*100}%"></div></div><span class="num">${v}</span></div>`).join("");
+}
+function renderStats(){
+  const rows=data();
+  const done=rows.filter(r=>r.done).length;
+  document.getElementById("resolveRate").innerHTML=Math.round(done/rows.length*100)+"%<small>解決率（"+done+"／"+rows.length+"件）</small>";
+  const tc={},fc={};
+  rows.forEach(r=>{tc[r.y]=(tc[r.y]||0)+1;fc[r.f]=(fc[r.f]||0)+1;});
+  bars(document.getElementById("typeBars"),tc,false);
+  bars(document.getElementById("fieldBars"),fc,true);
+}
+function renderPatterns(){
+  const g={};data().forEach(r=>{(g[r.y]=g[r.y]||[]).push(r);});
+  document.getElementById("patterns").innerHTML=Object.entries(g).map(([k,rs])=>
+    `<div class="pattern-group"><h3>${k}（${rs.length}件）</h3><ul>${rs.map(r=>`<li>${r.note}<span style="color:var(--gray)">（${r.t}）</span></li>`).join("")}</ul></div>`).join("");
+}
+document.getElementById("addForm").onsubmit=e=>{
+  e.preventDefault();
+  extra.push({id:Date.now(),t:val("f-title"),f:val("f-field"),y:val("f-type"),how:val("f-how"),note:val("f-note"),src:"手入力（デモ）",d:new Date().toISOString().slice(0,10),rep:1,done:false});
+  localStorage.setItem("kmd_extra",JSON.stringify(extra));
+  e.target.reset();
+  document.querySelector('.menu button[data-view="list"]').click();
+};
+const val=id=>document.getElementById(id).value.trim();
+renderList();
+</script>
+</body>
+</html>
