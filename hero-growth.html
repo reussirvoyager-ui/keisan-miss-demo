@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成長ストリップ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans JP',sans-serif;background:transparent;display:flex;justify-content:center;padding:4px}
+.row{width:100%;max-width:860px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{background:#F7F5F0;border:1px solid #E5DFD0;border-radius:10px;padding:12px 14px;text-align:center}
+.cap{font-size:11px;color:#8a8a8a;letter-spacing:.04em}
+.val{font-size:19px;color:#1B2A4A;font-weight:700;margin-top:4px;white-space:nowrap}
+.val .arrow{color:#BF9B56;font-weight:400;font-size:15px;padding:0 2px}
+.up{display:inline-block;margin-left:6px;font-size:12px;font-weight:700;color:#2E7D32;background:#E4F0E4;border-radius:999px;padding:2px 8px;vertical-align:2px}
+@media(max-width:560px){.row{grid-template-columns:1fr}.card{display:flex;justify-content:space-between;align-items:center;text-align:left}.val{margin-top:0}}
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="card">
+    <div class="cap">過去問｜日医・数学（300点満点）</div>
+    <div class="val">168 <span class="arrow">→</span> 189 <span class="arrow">→</span> 201<span class="up">＋33</span></div>
+  </div>
+  <div class="card">
+    <div class="cap">数学 偏差値（記述模試）</div>
+    <div class="val">58 <span class="arrow">→</span> 61<span class="up">＋3</span></div>
+  </div>
+  <div class="card">
+    <div class="cap">符号ミス（5月→6月）</div>
+    <div class="val">2件 <span class="arrow">→</span> 0件<span class="up">達成</span></div>
+  </div>
+</div>
+</body>
+</html>
